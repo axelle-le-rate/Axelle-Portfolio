@@ -9,10 +9,10 @@
 **Pandas Styler Research (Sub-Project)**
 As a follow-up to this project, I researched **Pandas Styler**, a module that enhances DataFrame presentation using HTML and CSS. Inspired by a blog post on **DEV Community**, I explored various styling techniques, including:
 
-**Coloring Cells** based on values
+. **Coloring Cells** based on values
 
-**Applying Color Gradients** to highlight trends
+. **Applying Color Gradients** to highlight trends
 
-**Highlighting Columns & Bar Charts in Cells**
+. **Highlighting Columns & Bar Charts in Cells**
 
 This research deepened my understanding of **data visualization within Pandas** and expanded my ability to present data in meaningful ways.
