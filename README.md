@@ -1,7 +1,9 @@
 # Super Smash Bros. Ultimate Data Analysis
 
 **Goal:** Explored and visualized character statistics using interactive data visualizations.
+
 **Tech Stack:** Python, Pandas, NumPy, Matplotlib, ipywidgets
+
 **Outcome:** Developed interactive bar charts, dropdown filters, and a color-enhanced DataFrame to present character attributes dynamically.
 
 **Pandas Styler Research (Sub-Project)**
