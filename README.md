@@ -73,3 +73,12 @@ This project represents my first deep dive into data science applications in fin
 - **Matplotlib** – Data visualization
 - **SciPy** – Exponential curve fitting
 - **Polynomial & Logarithmic Regression** – Alternative modeling techniques
+  
+## References
+Abhigyan. (2020, August 2). Understanding Polynomial Regression!!! Medium. https://medium.com/analytics-vidhya/understanding-polynomial-regression-5ac25b970e18
+
+Python Machine Learning Polynomial Regression. (n.d.). Www.w3schools.com. https://www.w3schools.com/python/python_ml_polynomial_regression.asp
+
+Zach. (2020, September 9). Explanatory & Response Variables: Definition & Examples. Statology. https://www.statology.org/explanatory-response-variables/
+
+Zach. (2021, March 30). Logarithmic Regression in Python (Step-by-Step). Statology. https://www.statology.org/logarithmic-regression-python/
