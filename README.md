@@ -2,126 +2,68 @@
 
 ## **Project Overview**
 
-This project focuses on the feature engineering process for a machine learning model aimed at pneumonia detection in chest X-ray images. The goal is to extract meaningful features from the images and evaluate their relevance in distinguishing between pneumonia and normal images. This project walks through various image processing techniques, such as edge detection, texture extraction, and dimensionality reduction, and uses statistical analysis to determine which features significantly contribute to the classification.
+This project focuses on the feature engineering process for a machine learning model aimed at detecting pneumonia in chest X-ray images. The objective was to extract meaningful features from the images and evaluate their relevance in distinguishing between pneumonia and normal X-rays. The process involved image preprocessing, feature extraction, and statistical analysis to identify which features contribute most to classification accuracy.
 
-## **Table of Contents**
+## **Tools and Libraries**
 
-- [Project Setup](#project-setup)
-- [Image Preprocessing](#image-preprocessing)
-- [Feature Engineering](#feature-engineering)
-- [Statistical Analysis: T-test](#statistical-analysis-t-test)
-- [Results and Discussion](#results-and-discussion)
-- [Conclusion](#conclusion)
-- [References](#references)
+The following tools and libraries were used throughout the project:
 
-## **Project Setup**
+- **Python**: Primary programming language for image processing, feature extraction, and statistical analysis.
+- **NumPy**: For efficient handling of numerical data and mathematical operations.
+- **Matplotlib**: Used for data visualization to plot and analyze the results.
+- **SciPy**: For statistical analysis, including conducting the T-test.
+- **OpenCV**: Used for image preprocessing tasks like resizing, grayscale conversion, and edge detection.
+- **scikit-learn**: For machine learning tasks, particularly principal component analysis (PCA) for dimensionality reduction.
+- **Pandas**: For managing and processing data, especially during statistical analysis.
 
-Before running the code, make sure to have the necessary libraries installed. This project primarily uses the following Python packages:
+## **Project Steps**
 
-- `numpy`
-- `matplotlib`
-- `scipy`
-- `sklearn`
-- `opencv`
-- `pandas`
+The project was divided into the following main steps:
 
-You can install the required libraries using `pip`:
+### **1. Image Preprocessing**
 
-```bash
+- **Resizing**: All images were resized to a uniform shape to maintain consistency across the dataset.
+- **Grayscale Conversion**: Conversion to grayscale helped simplify the analysis, as it reduced the image complexity without losing essential information.
+- **Normalization**: Pixel values were scaled between 0 and 1 to standardize the data and improve model training.
+- **Edge Detection**: Techniques like Canny edge detection were used to highlight structural features, such as the outline of the lungs, which may be crucial for detecting pneumonia.
 
-pip install numpy matplotlib scipy scikit-learn opencv-python pandas
+### **2. Feature Engineering**
 
+Key features were extracted from the X-ray images to help classify them as either "pneumonia" or "normal". The following techniques were used:
 
-The dataset used consists of chest X-ray images, with 300 images in each category (pneumonia and normal). These images are loaded and preprocessed in the code.
+- **Texture Features**: Statistical measures like contrast, correlation, energy, and homogeneity were extracted from the images using the Gray-Level Co-occurrence Matrix (GLCM).
+- **Edge Features**: Canny edge detection provided boundaries and shapes that could help differentiate between the two classes.
+- **Dimensionality Reduction**: Principal Component Analysis (PCA) was used to reduce the number of features while maintaining the most important information.
 
-Image Preprocessing
-The first step in the project was image preprocessing. This included the following steps:
+### **3. Statistical Analysis (T-test)**
 
-Resizing: Each image was resized to a uniform shape to ensure consistency across all images.
-Grayscale Conversion: Images were converted to grayscale to simplify feature extraction.
-Normalization: Pixel values were scaled between 0 and 1 to standardize the data.
-Edge Detection: Techniques like Canny edge detection were used to highlight key structural features of the images that are potentially important for classification.
-Image Preprocessing Code:
-python
-Copy
-Edit
-import cv2
-import numpy as np
+Once the features were extracted, a **T-test** was applied to determine which features had statistically significant differences between pneumonia and normal X-ray images. The T-test helped assess whether the mean differences between the two classes for each feature were large enough to matter. Features with a p-value less than 0.05 were considered significant.
 
-# Resize and normalize the image
-def preprocess_image(image_path):
-    image = cv2.imread(image_path)
-    gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    resized_image = cv2.resize(gray_image, (256, 256))  # Resize for consistency
-    normalized_image = resized_image / 255.0  # Normalize to range [0, 1]
-    return normalized_image
-Feature Engineering
-Feature extraction involves identifying key characteristics from the images that can help classify the images as either normal or pneumonia. Several techniques were used to extract features:
+## **Results and Discussion**
 
-Texture Features: Statistical texture measures such as contrast, correlation, energy, and homogeneity were extracted using methods like the Gray-Level Co-occurrence Matrix (GLCM).
+The statistical analysis revealed that most of the texture-based features, such as correlation, energy, and homogeneity, were highly significant in distinguishing pneumonia from normal X-rays. However, **contrast** did not show significant differences, and it was concluded that this feature would likely be excluded from future models.
 
-Edge Features: Edge features were captured using edge detection techniques, including Canny edge detection. These help identify the boundaries and shapes within the image, which are crucial for distinguishing between different types of X-ray images.
+## **Conclusion**
 
-Thresholding: Otsu’s method was used for automatic thresholding to segment the images and highlight key regions of interest.
+This project demonstrated the importance of feature engineering in improving the performance of machine learning models, especially in image classification tasks. By extracting and analyzing various image features, we were able to identify which aspects of the X-ray images contributed most to distinguishing between pneumonia and normal cases. The process also highlighted the value of statistical analysis in validating the relevance of features for a classification task.
 
-Skeletonization: The skeletonization technique was used to reduce the shapes in the image to their simplest form, preserving the essential features like borders and shapes while eliminating unnecessary details.
+In future work, these features can be used to train a machine learning model, such as a convolutional neural network (CNN), to further improve pneumonia detection accuracy. This project also reinforced the value of preprocessing and feature extraction in creating a strong foundation for machine learning applications.
 
-Principal Component Analysis (PCA): PCA was applied to reduce the dimensionality of the extracted features while preserving the most important information for classification. This helps in improving the efficiency of the model.
+## **Skills Gained and Applied**
 
-Feature Engineering Code:
-python
-Copy
-Edit
-from skimage.feature import greycomatrix, greycoprops
+Throughout this project, I gained valuable experience in several areas of data science and machine learning, including:
 
-# Extract texture features
-def extract_texture_features(image):
-    glcm = greycomatrix(image, distances=[1], angles=[0], symmetric=True, normed=True)
-    contrast = greycoprops(glcm, 'contrast')[0, 0]
-    correlation = greycoprops(glcm, 'correlation')[0, 0]
-    energy = greycoprops(glcm, 'energy')[0, 0]
-    homogeneity = greycoprops(glcm, 'homogeneity')[0, 0]
-    return contrast, correlation, energy, homogeneity
-Statistical Analysis: T-test
-Once the features were extracted, a statistical test was performed to evaluate which features were significant in differentiating between pneumonia and normal X-ray images. The T-test was used to compare the mean values of each feature between the two classes (pneumonia and normal).
+- **Image Preprocessing**: Techniques like resizing, grayscale conversion, and edge detection, which are essential in preparing data for analysis.
+- **Feature Engineering**: The ability to extract and process various types of features from images to improve model performance.
+- **Statistical Analysis**: Using the T-test to assess the significance of different features and ensure the reliability of the results.
+- **Dimensionality Reduction**: Applying PCA to reduce the number of features while retaining the most important information for classification.
 
-T-test: The T-test was applied to each feature to assess if the mean difference between the two classes was statistically significant. Features with a p-value lower than 0.05 were considered significant.
-T-test Code:
-python
-Copy
-Edit
-from scipy.stats import ttest_ind
+## **References**
 
-# Perform T-test on extracted features
-def perform_ttest(feature_set_1, feature_set_2):
-    t_stat, p_value = ttest_ind(feature_set_1, feature_set_2)
-    return t_stat, p_value
-Results and Discussion
-After conducting the T-test, we found that almost all of the features showed statistically significant differences between the pneumonia and normal categories. The exception was the contrast feature, which had no significant difference and will likely be excluded in future models.
-
-Key findings include:
-
-Significant Features: Texture-based features like correlation, energy, and homogeneity showed strong distinguishing power between pneumonia and normal X-rays.
-Exclusion of Contrast: Contrast did not show a significant difference, and hence, it does not contribute meaningfully to the classification task.
-Conclusion
-This project demonstrated the importance of feature engineering in improving the performance of machine learning models. Through extensive preprocessing, feature extraction, and statistical analysis, we were able to identify meaningful features for pneumonia detection. While some features, like contrast, were not helpful, others significantly contributed to the classification task.
-
-In the future, these features could be incorporated into a machine learning model, such as a convolutional neural network (CNN), to improve the accuracy of pneumonia detection in chest X-ray images.
-
-The challenges faced during the project, including time constraints and limited knowledge of feature engineering techniques, helped me grow as a data scientist. With the skills gained, I feel confident in tackling similar projects in the future.
-
-References
 The following resources were instrumental in completing this project:
 
-300 images per category
-Feature Engineering Start
-PCA Implementation
-Random Sampling of Pneumonia Images
-Convolutional Display
-Otsu Threshold Format
-Canny Edge Detection Ratio and Format
-Skeletonization Techniques
-T-test Application
-pgsql
-Copy
-Edit
+- "Feature Engineering for Machine Learning" by Alice Zheng and Amanda Casari
+- OpenCV Documentation for Image Processing Techniques
+- SciPy Documentation for Statistical Analysis
+- scikit-learn Documentation for Principal Component Analysis
+- Image Preprocessing and Edge Detection Techniques in OpenCV
