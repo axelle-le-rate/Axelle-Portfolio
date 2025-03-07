@@ -1,5 +1,3 @@
-## To The United Kingdom!
-
 # Project Overview
 This project ranks countries based on their readiness to face climate change and their overall livability, focusing on factors such as climate resilience, government stability, economic capacity, access to higher education, and cost of living. The United Kingdom (UK) emerged as the top contender through data analysis, which integrated various components from the ND-GAIN Index, specifically: readiness, economic capacity, government capacity, health risks, fresh water availability, higher education rankings, and cost of living. The goal was to identify the best country for relocation, with the UK as an ideal choice.
 
