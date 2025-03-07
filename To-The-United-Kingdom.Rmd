@@ -1,0 +1,307 @@
+---
+title: "Cheers to the United Kingdom! Your Exciting New Home!"
+author: "Axelle Jimenez"
+date: "2024-12-09"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+setwd("~/Desktop/DS 101")
+```
+
+# Congratulations! You’re moving to the United Kingdom!
+
+```{r}
+knitr::include_graphics("UnitedKingdom.jpg")
+
+```
+
+
+You are making the best decision to leave the U.S for another country that leads in climate change readiness, an amazing higher education system, and offers affordable housing! Through my data cleaning and analysis, I identified the best country tailored to your priorities.
+
+To rank countries, including the UK, I analyzed several factors influencing climate resilience and living standards. Specifically, I focused on components of the ND-GAIN Index, which measures a country's readiness and vulnerability to climate change. These factors include: 
+
+1. Current readiness
+2. Economic capacity
+3. Government capacity
+4. Health risk
+5. Fresh water capacity
+6. Higher education rank 
+7. Cost of living
+
+
+By categorizing these factors into "readiness" and "vulnerability" scores, I calculated a composite score resembling an ND-GAIN index. Countries were ranked based on this composite, providing a holistic view of their climate adaptability and livability.
+
+In this project, I will walk you through the step-by-step process of how I calculated these rankings and why the UK rules at the top of the rank. Let's dive right in!
+
+# Step 1: Import Libraries
+
+Here are the libraries I use for this project:
+
+**readr**: to read in data <br>
+**dplyr**: for data manipulation <br>
+**tidyr**: to reshape and clean data <br>
+**scales**: to scale numbers (Chat GPT recommended it to scale numbers to make them easier to compare across variables)
+
+```{r}
+library(readr)
+library(dplyr)
+library(tidyr)
+library(scales)
+```
+
+Now that we have our libraries, we're ready to jump right into our analysis.
+
+# Step 2: Read in Datasets
+
+For this project, I pulled data from several datasets to analyze the factors I mentioned earlier. After importing them, I set each dataset as a variable so I could reference them throughout my analysis. 
+
+```{r}
+# current readiness
+cr <- read_csv("current_readiness.csv")
+
+# economic capacity
+ec <- read_csv("Economic_capacity.csv")
+
+# government capacity
+gov <- read_csv("governance_capacity.csv")
+
+# higher ed rankings
+her <- read.csv("HigherEdRankings-3.csv")
+
+# health risks
+hr <- read.csv("HealthRisks.csv")
+
+# arable per capita
+apc <- read.csv("ArablePerCapita.csv")
+
+# fresh Water
+fw <- read_csv("FreshWater.csv")
+
+# cost of living
+cs <- read_csv("CostOfLiving.csv")
+
+```
+
+Once I imported all the datasets, I combined them into one big dataset that contained everything I needed for my analysis. This way, I coulld easily calculate my composite score and rank the countries. 
+
+# Step 3: Read in Datasets
+
+To sort my analysis, I merged all the datasets based on their country abbreviations. Most of the datasets had a column named ISO3 for the country abbreviations, so I used that to merge them into a single dataset called comb. However, as I began merging, I noticed that the process was creating duplicate column names, which made it confusing when cleaning the data later.  
+
+To fix this, I asked Chat GPT for advice, and it suggested using make.unique() to ensure that all column names in the combined data set were unique after each merge. This worked perfectly and saved me from any naming issues down the line. Here's the code I used for merging datasets with ISO3.  
+
+```{r}
+# merge the datasets one by one
+comb <- merge(cr, ec, by = 'ISO3', all = TRUE)
+names(comb) <- make.unique(names(comb))
+
+comb <- merge(comb, gov, by = 'ISO3', all = TRUE)
+names(comb) <- make.unique(names(comb))
+
+comb <- merge(comb, hr, by = 'ISO3', all = TRUE)
+names(comb) <- make.unique(names(comb))
+```
+
+For some datasets, the country abbreviation column wasn't named ISO3. I renamed those columns using the rename() function from dpylr before merging them into the combined dataset. Here's what that looked like:
+
+```{r}
+apc <- apc %>%
+  rename(ISO3 = `Country.Code`) # rename abbreviation column to ISO3
+comb <- merge(comb, apc, by = 'ISO3', all = TRUE) # merge dataset
+names(comb) <- make.unique(names(comb))
+
+
+fw <- fw %>%
+  rename(ISO3 = `Country Code`)
+comb <- merge(comb, fw, by = 'ISO3', all = TRUE)
+names(comb) <- make.unique(names(comb))
+
+
+her <- her %>%
+  rename(ISO3 = `Abbreviation`)
+comb <- merge(comb, her, by = 'ISO3', all = TRUE)
+names(comb) <- make.unique(names(comb))
+```
+
+There was also an issue with the Country column in one dataset, which conflicted with columns in the combined dataset. I renamed it to Name.x to avoid confusion.
+```{r}
+cs <- cs %>%
+  rename(Name.x = `Country`)
+comb <- merge(comb, cs, by = 'Name.x', all = TRUE)
+names(comb) <- make.unique(names(comb))
+```
+
+With all the dataset successfully merged, I was left with a single dataset containing all the information I needed. From here, I moved on to clean the data, keeping only the relevant columns for my analysis.
+
+# Step 4: Data Cleaning
+
+Once all the dataset were merged, I noticed that columns with country names like Name.x, Name.x.1, Name.x.2, etc., showed up repreatedly in the data. Initially, I thought about just deleting the duplicated, but I realized that instead of just deleting those duplicates, I could just focus on keeping only the columns I actually needed for my analysis.
+
+To streamline things, I made a list of the necessary columns and updated the dataset to include only those. 
+
+```{r}
+# keep only the necessary columns and remove the rest
+necessary_columns <- c("ISO3", "Country.Name", "ready_2017","E_cap_2017","2019","health_risk_2017","Arable_2017","FWPC_2017","HigherEdRank", "Cost of Living Index")
+
+comb <- comb %>%
+  select(all_of(necessary_columns))
+
+# view the cleaned data
+head(comb)
+```
+
+This helps, but there were still rown with NA values in critical columns like ISO3 and Country.Name. These rows weren't adding any value, so I asked ChatGPT how to clean them out. It generated this code:
+
+```{r}
+# remove rows where the 'ISO3' column is NA and the entire row is NA
+comb <- comb %>%
+  filter(!is.na(ISO3)) %>%  # remove rows where 'ISO3' is NA
+  filter(rowSums(is.na(.)) != ncol(.))  # remove rows where all columns are NA
+```
+
+Now the dataset was looking much cleaner, but I knew I needed to focus on what matterede the most: countries with valid higher education rankings and cost of living data. I filtered the dataset to keep only rows where these were present.
+
+```{r}
+# remove rows where HigherEdRank.y are NA
+comb <- comb %>%
+  filter(!is.na(HigherEdRank))
+
+comb <- comb %>%
+  rename(Cost_of_Living_Index = `Cost of Living Index`)
+
+comb <- comb %>%
+  filter(!is.na(Cost_of_Living_Index))
+
+print(comb)
+```
+
+At this point, I wanted to ensure the countries in the dataset had a reasonable cost of living. The idea was to filter out countries significantly more expensive than the United States while keeping it flexible for a few borderline options. I used a range of 50 to 75.
+
+```{r}
+# filter rows based on cost of living index range
+comb <- comb %>%
+  filter(Cost_of_Living_Index >= 50 & Cost_of_Living_Index <= 75)
+
+# check the updated dataset
+print(comb)
+
+```
+
+The United States was still hanging around in the dataset, but since the goal is to move away from the U.S, I removed it entirely.
+
+```{r}
+# remove row where ISO3 is "USA"
+comb <- comb %>%
+  filter(ISO3 != "USA")
+
+```
+
+Finally, I scaled the numerical columns that weren't already normalized to a 0 - 1 range. Scaling makes comparisons between values fairer and simplifies calculations later. ChatGPT helped me with this too. 
+
+```{r}
+# scale selectrd columns from 0 to 1
+comb <- comb %>%
+  mutate(
+    FWPC_2017 = rescale(FWPC_2017, to = c(0, 1)),
+    HigherEdRank= rescale(HigherEdRank, to = c(0, 1)),
+    `Cost_of_Living_Index` = rescale(`Cost_of_Living_Index`, to = c(0, 1))
+  )
+```
+
+One last tweak: I adjusted the direction of some ranks. lower health risks, higher education rankings, and lower cost of living indices were initially represented with lower numbers, but for consistency, I flipped these so higher numbers represented better quality across the board. I also removed the columns for the old higher education rank, health risk, and cost of living, since we won't need them for the analysis.
+
+```{r}
+# adjust health risk and higher education ranks for easier comparison
+comb <- comb %>%
+  mutate(
+    adjusted_higher_ed_rank = max(HigherEdRank, na.rm = TRUE) - HigherEdRank,
+    adjusted_health_risk = max(health_risk_2017, na.rm = TRUE) - health_risk_2017,
+    adjusted_cost_of_living = max(Cost_of_Living_Index, na.rm = TRUE) - Cost_of_Living_Index,
+  )
+
+# remove the old higher education rank, health risk, and cost of living columns
+comb <- comb %>%
+  select(-HigherEdRank, -health_risk_2017, -Cost_of_Living_Index)
+
+# verify that the columns were removed
+print(head(comb))
+
+```
+
+After all these steps, the dataset was ready for analysis. Everything was clean, scled, and aligned with the priorities of the project. It felt great to finally have a solid foundation to build on. 
+
+# Step 6: Creating the Algorithm 
+
+The algorithm starts by calculating tow scores for each country: the readiness rank and the vulnerability rank. These ranks are inspired by the ND-GAIN Index but tailored to focus on what truly matters for this scenario. The goal is the identify a country with a high readiness rank and a low vulnerability rank.
+
+A high readiness rank means the country is currently well-prepared. It's economically capable, well-governed, and has an excellent higher education system, perfect for both you and your child. A low vulnerability rank ensures fewer risks and inconveniences, like low health risks, affordable cost of living, available arable land, and access to clean water. 
+
+## Readiness Rank
+
+The readiness rank includes factors like the current readiness, economic capacity, and government capacity, similar to the ND-GAIN Index. However, I added the higher education rank because it directly aligns with your priorities. I also chose the weights carefully:
+
+20: Readiness and economic capacity are equally important
+23: Government capacity gets more emphasis because on one wants a country governed by another Kanye West, East, North, South, or anything in between. Stability matters!
+25: Higher education rank is also a priority, as it impacts both your work as a professor and your child's opportunities. While important, it doesn't dominate other factors.
+
+```{r}
+comb <- comb %>%
+  rename(G_2019 = `2019`)
+
+comb$readiness_rank <- 20 * comb$ready_2017 +
+                      20 * comb$E_cap_2017 +
+                      23 * comb$G_2019 +
+                      25 * comb$adjusted_higher_ed_rank
+```
+
+## Vulnerability Rank
+
+For the vulnerability rank, the focus shifts slightly. While factors like health risks, arable land, and water availability are considered, they don't carry as much weight in this context. A country that's already ready and well-governed likely manages these issues effectively. 
+
+The one big exception is the cost of living. Even if a country is economically capable, an extremely high cost of living could create significant challenges. So, this factor gets a higher weight to ensure affordability is prioritized.
+```{r}
+comb$vulnerability_rank <- 15 * comb$adjusted_health_risk +
+                          20 * comb$adjusted_cost_of_living +
+                          13 * comb$Arable_2017 +
+                          13 * comb$FWPC_2017
+```
+
+This setup makes sure that both ranks reflect your priorities effectively. The readiness rank emphasizes stability, governance, and education, while the vulnerability rank focuses on affordability and minimizing potential risks. With these scores, we're ready to identify the best country for your needs!
+
+# Step 7: Composite Score 
+
+Now that we calculated the readiness and vulnerability ranks, the next step is to combine them into a single composite score. This score captures how suitable every country is for you by balancing the good (readiness) against the bad (vulnerability).
+
+The formula is straightforward. We subtract the vulnerability rank from the readiness rank. Why? Because a high readiness rank is desirable, while a high vulnerability rank indicates risks or inconveniences. The subtraction ensures that the composite score reflects this balance - higher scores mean better choices. 
+```{r}
+comb <- comb %>%
+  mutate(composite_score = readiness_rank - vulnerability_rank)  
+
+```
+
+This simple yet effective calculation helps prioritize countries that are ready to support your goals while minimizing potential downsides. From here, you rank the countries by their composite scores the identify the top contenders. 
+
+# Step 8: Top 20 Countries 
+
+The scores are in! Now it's time to reveal the top 20 countries that are best suited for your goals. These countries score high in readiness, balance well against vulnerability, and are ready to support you with excellent systems of higher education, reasonable housing costs, and good climate resilience.
+
+With that, at the top, the United Kingdom takes the crown! 
+```{r}
+# display the top 20 countries by composite score
+top_20_countries <- comb %>%
+  arrange(desc(composite_score)) %>%
+  head(20)
+
+# print the top 20 countries
+print(top_20_countries)
+```
+
+This list highlights the most promising destinations tailored to your specific needs. Each country on the list excels in providing a balance between readiness and vulnerability, ensuring you have the bets options to thrive. Safe travels!
+
+```{r}
+#rm(list = ls())
+
+```
+
