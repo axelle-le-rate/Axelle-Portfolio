@@ -7,6 +7,7 @@
 **Outcome:** Developed interactive bar charts, dropdown filters, and a color-enhanced DataFrame to present character attributes dynamically.
 
 **Pandas Styler Research (Sub-Project)**
+
 As a follow-up to this project, I researched **Pandas Styler**, a module that enhances DataFrame presentation using HTML and CSS. Inspired by a blog post on **DEV Community**, I explored various styling techniques, including:
 
 **. Coloring Cells** based on values
