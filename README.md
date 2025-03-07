@@ -54,3 +54,9 @@ During my research, I came across several interesting ways to improve visualizat
 In addition, I could have used emojis to represent the strength or weakness of characters in various categories, making the data more visually intuitive and fun. This idea can be a playful yet effective way to show rankings.
 
 Overall, this was a fun exploration of **Pandas Styler**, and I’m excited to try these new visualizations in future projects. I plan to go back to my **Super Smash Bros.** analysis and apply some of these new ideas to further refine the project.
+
+## Technologies & Tools Used
+- **Pandas**: To manipulate and analyze data
+- **Matplotlib**: To visualize data
+- **Pandas Styler**: To apply custom styling and vibrant visualizations to DataFrames
+- **Ipywidgets**: To create interactive elements like dropdowns and scrollers for exploring character stats
