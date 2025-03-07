@@ -1,4 +1,4 @@
-# **README: Feature Engineering for Pneumonia Detection using Chest X-Rays**
+# **Feature Engineering for Pneumonia Detection using Chest X-Rays**
 
 ## **Project Overview**
 
